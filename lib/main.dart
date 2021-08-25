@@ -16,7 +16,21 @@ class MyApp extends StatelessWidget {   // This is where the app starts
 	@override
 	Widget build(BuildContext context) {
 
-
+ /*    return Scaffold(
+    appBar: AppBar(
+      title: const Text('Sample Code'),
+    ),
+    body: Center(
+      child: Text('You have pressed the button times.')
+    ),
+    floatingActionButton: FloatingActionButton(
+      onPressed: () {
+     
+      }
+    ),
+//	child: CameraApp(),
+  ); */
+//}
 
 	 	return MaterialApp(
 			/* appBar: AppBar(
@@ -36,7 +50,7 @@ class CameraApp extends StatefulWidget {
 	_CameraAppState createState() => _CameraAppState();
 }
 
-/// This is the private State class that goes with CameraApp StatefulWidget.
+/// This is the private State class that goes with CameraApp StatefulWidget above
 class _CameraAppState extends State<CameraApp> {
 	late CameraController controller;  // I added late stating that it would be initialised later
 
@@ -60,13 +74,53 @@ class _CameraAppState extends State<CameraApp> {
 
 	@override
 	Widget build(BuildContext context) {
+
 		if (!controller.value.isInitialized) {
 			return Container();
 		}
-		return AspectRatio(		// Using Aspectratio got the camera to show again
-			aspectRatio: controller.value.aspectRatio,	// just sets the aspectratio of the view I think
-        	child: CameraPreview(controller)
-		);
+		return Scaffold(
+			/* hg AspectRatio(		// Using Aspectratio got the camera to show again
+				aspectRatio: controller.value.aspectRatio,	// just sets the aspectratio of the view I think
+				child: CameraPreview(controller)
+			), */
+			appBar: AppBar(
+          		title: const Text('Home Route'),
+        	),
+			body: Stack(
+		//			child: Text('You have pressed the button?? times.'),
+				children: <Widget>[
+				Center (
 
-	}
-}
+					child: CameraPreview(controller),
+          
+
+				),
+				],
+			// well
+      
+        	
+			),
+      floatingActionButton: FloatingActionButton(
+         		 elevation: 10.0,
+         		 child: Icon(Icons.add),
+         		 onPressed: (){
+            		print('I am Floating button');
+          		}
+		      ), 
+
+    );
+		/* floatingActionButton: FloatingActionButton(
+         		 elevation: 10.0,
+         		 child: Icon(Icons.add),
+         		 onPressed: (){
+            		print('I am Floating button');
+          		}
+		), */
+			
+		//	CameraPreview(controller)
+		   
+		
+		//child: CameraPreview(controller)
+
+	}	// BuildContext
+}	// end of _CameraAppState
