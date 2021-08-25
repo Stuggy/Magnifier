@@ -17,26 +17,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    /*    return Scaffold(
-    appBar: AppBar(
-      title: const Text('Sample Code'),
-    ),
-    body: Center(
-      child: Text('You have pressed the button times.')
-    ),
-    floatingActionButton: FloatingActionButton(
-      onPressed: () {
-     
-      }
-    ),
-//	child: CameraApp(),
-  ); */
-//}
-
     return MaterialApp(
-      /* appBar: AppBar(
-			title: Text('test'),
-			), */
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
@@ -53,6 +34,7 @@ class CameraApp extends StatefulWidget {
 
 /// This is the private State class that goes with CameraApp StatefulWidget above
 class _CameraAppState extends State<CameraApp> {
+  XFile? imageFile; // the file for the camera capture
   late CameraController
       controller; // I added late stating that it would be initialised later
 
@@ -74,16 +56,15 @@ class _CameraAppState extends State<CameraApp> {
     super.dispose();
   }
 
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) {  // _CameraAppState
     if (!controller.value.isInitialized) {
       return Container();
     }
     return Scaffold(
-      /* hg AspectRatio(		// Using Aspectratio got the camera to show again
-				aspectRatio: controller.value.aspectRatio,	// just sets the aspectratio of the view I think
-				child: CameraPreview(controller)
-			), */
+      key: _scaffoldKey,
       appBar: AppBar(
         title: const Text('Home Route'),
       ),
@@ -96,7 +77,7 @@ class _CameraAppState extends State<CameraApp> {
       ), // end of Stack
       floatingActionButton: FloatingActionButton(
         elevation: 10.0,
-        child: Icon(Icons.add),
+        child: Icon(Icons.camera_alt),
         onPressed: () async {
           // Take the Picture in a try / catch block. If anything goes wrong,
           // catch the error.
@@ -107,7 +88,6 @@ class _CameraAppState extends State<CameraApp> {
             // Attempt to take a picture and then get the location
             // where the image file is saved.
             final image = await controller.takePicture();
-
             // If the picture was taken, display it on a new screen.
             await Navigator.of(context).push(
               MaterialPageRoute(
@@ -115,9 +95,12 @@ class _CameraAppState extends State<CameraApp> {
                   // Pass the automatically generated path to
                   // the DisplayPictureScreen widget.
                   imagePath: image.path,
+                  
                 ),
               ),
-            );
+            );  // end of await
+            String msg = "The image was saved to: " + image.path;
+            showInSnackBar(msg);
           } catch (e) {
             // If an error occurs, log the error to the console.
             print(e);
@@ -129,6 +112,23 @@ class _CameraAppState extends State<CameraApp> {
       ),
     );  // end of scaffold
   } // BuildContext for camerapp
+  
+  void showInSnackBar(String message) {
+      // I had to move this class within the _CameraAppState or _scaffoldKey was undefined
+   //   _scaffoldKey.currentState?.showSnackBar(SnackBar(content: Text(message)));
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(message),
+            /* action: SnackBarAction(
+              label: 'Action',
+              onPressed: () {
+                // Code to execute.
+              },
+            ), */
+          ),
+      );
+  }
+
 } // end of _CameraAppState
 
 // A widget that displays the picture taken by the user.
@@ -144,7 +144,7 @@ class DisplayPictureScreen extends StatelessWidget {
       appBar: AppBar(title: const Text('Display the Picture')),
       // The image is stored as a file on the device. Use the `Image.file`
       // constructor with the given path to display the image.
-      body: Image.file(File(imagePath)),
+      body: Image.file(File(imagePath)),  // this is the already saved image
     );
   } //
 }
